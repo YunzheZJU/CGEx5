@@ -11,35 +11,37 @@
 #define Y 1
 #define Z 2
 #define W 3
+#define R 0
+#define A 1
 
 float fTranslate;
 float fRotate = 0.0f;
 float fScale = 1.0f;	// set inital scale value to 1.0f
 float fTpRtt = 0.0f;
 
-bool bPersp = false;
-bool bAnim = false;
-bool bRtt = false;
-bool bWire = false;
+bool bPersp = false;								// 透视模式开关
+bool bWire = false;									// 线框模式开关
+bool bAnim = false;									// 整体旋转开关
+bool bRtt = false;									// 茶壶旋转开关
 
 int wHeight = 0;
 int wWidth = 0;
 
-float eye[] = { 0, 0, 8 };
-float center[] = { 0, 0, 0 };
-float teapot[] = { 0, 0, 0 };
-float spot[] = { 0, 8, 0 };
-float target[] = { 0, 0, 0 };
-float point[] = { 5, 5, 5, 1 };
-float polar[] = { 8, 0 };
+float teapot[] = { 0, 0, 0 };						// 茶壶位置
+float camera[] = { 0, 0, 8 };						// 摄像机位置
+float camera_polar[] = { 8, 0 };					// 摄像机极坐标
+float camera_target[] = { 0, 0, 0 };				// 摄像机目标
+float point[] = { 5, 5, 5, 1 };						// 点光源位置
+float spot[] = { 0, 8, 0 };							// 聚光灯位置
+float spot_target[] = { 0, 0, 0 };					// 聚光灯目标
 
 GLint List = 0;
 
 GLfloat yellow[] = { 1.0, 1.0, 0.0, 1.0 };
-GLfloat red[] = { 1.0, 0.0, 1.0, 1.0 };
+GLfloat red[] = { 1.0, 0.0, 0.0, 1.0 };
 GLfloat blue[] = { 0.0, 0.0, 1.0, 1.0 };
 GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
-
+GLfloat point_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };	// 漫反射光默认为红色
 
 void Draw_Leg() {
 	glScalef(1, 1, 3);
@@ -154,31 +156,31 @@ void normalkey(unsigned char k, int x, int y) {
 		break;
 	}
 	case 'a': {
-		eye[X] -= 0.1;
-		center[X] -= 0.1;
+		//camera[X] -= 0.1;
+		camera_polar[A] -= 0.1;
 		break;
 	}
 	case 'd': {
-		eye[X] += 0.1;
-		center[X] += 0.1;
+		//camera[X] += 0.1;
+		camera_polar[A] += 0.1;
 		break;
 	}
 	case 'w': {
-		eye[Y] += 0.1;
-		center[Y] += 0.1;
+		camera[Y] += 0.1;
 		break;
 	}
 	case 's': {
-		eye[Y] -= 0.1;
-		center[Y] -= 0.1;
+		camera[Y] -= 0.1;
 		break;
 	}
 	case 'z': {
-		eye[Z] *= 0.95;
+		//camera[Z] *= 0.95;
+		camera_polar[R] *= 0.95;
 		break;
 	}
 	case 'c': {
-		eye[Z] *= 1.05;
+		//camera[Z] *= 1.05;
+		camera_polar[R] *= 1.05;
 		break;
 	}
 
@@ -220,33 +222,36 @@ void normalkey(unsigned char k, int x, int y) {
 
 	// 聚光灯目标操作
 	case 't': {
-		target[Y] += 0.2;
+		spot_target[Y] += 0.2;
 		break;
 	}
 	case 'g': {
-		target[Y] -= 0.2;
+		spot_target[Y] -= 0.2;
 		break;
 	}
 	case 'f': {
-		target[X] -= 0.2;
+		spot_target[X] -= 0.2;
 		break;
 	}
 	case 'h': {
-		target[X] += 0.2;
+		spot_target[X] += 0.2;
 		break;
 	}
 	}
+	camera_target[Y] = 0.4 * camera[Y];
+	camera[X] = camera_polar[R] * sin(camera_polar[A]);
+	camera[Z] = camera_polar[R] * cos(camera_polar[A]);
 }
 
 void specialkey(int k, int x, int y) {
 	switch (k) {
 	// 点光源位置相关操作
 	case 101: {
-		point[Y] += 0.2;
+		point[Z] += 0.2;
 		break;
 	}
 	case 103: {
-		point[Y] -= 0.2;
+		point[Z] -= 0.2;
 		break;
 	}
 	case 100: {
@@ -258,11 +263,11 @@ void specialkey(int k, int x, int y) {
 		break;
 	}
 	case 104: {
-		point[Z] += 0.2;
+		point[Y] += 0.2;
 		break;
 	}
 	case 105: {
-		point[Z] += 0.2;
+		point[Y] += 0.2;
 		break;
 	}
 	}
@@ -315,9 +320,9 @@ void redraw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();									// Reset The Current Modelview Matrix
 
-	gluLookAt(eye[X], eye[Y], eye[Z],
-		center[X], center[Y], center[Z],
-		0, 1, 0);				// 摄像机（0，0，8）的视点中心（0, 0, 0），Y轴向上
+	gluLookAt(camera[X], camera[Y], camera[Z],
+		camera_target[X], camera_target[Y], camera_target[Z],
+		0, 1, 0);										// 摄像机（0，0，8）的视点中心（0, 0, 0），Y轴向上
 
 	if (bWire) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

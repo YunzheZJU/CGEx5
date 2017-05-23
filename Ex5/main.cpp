@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <iostream>
+
+using namespace std;
 
 #define X 0
 #define Y 1
@@ -13,13 +16,14 @@
 #define W 3
 #define R 0
 #define A 1
+#define Pi 3.1415926
 
 float fTranslate;
 float fRotate = 0.0f;
-float fScale = 1.0f;	// set inital scale value to 1.0f
+float fScale = 1.0f;								// set inital scale value to 1.0f
 float fTpRtt = 0.0f;
 
-bool bPersp = false;								// 透视模式开关
+bool bPersp = true;									// 透视模式开关
 bool bWire = false;									// 线框模式开关
 bool bAnim = false;									// 整体旋转开关
 bool bRtt = false;									// 茶壶旋转开关
@@ -28,20 +32,35 @@ int wHeight = 0;
 int wWidth = 0;
 
 float teapot[] = { 0, 0, 0 };						// 茶壶位置
-float camera[] = { 0, 0, 8 };						// 摄像机位置
-float camera_polar[] = { 8, 0 };					// 摄像机极坐标
-float camera_target[] = { 0, 0, 0 };				// 摄像机目标
+float camera[] = { 0, 1, 4 };						// 摄像机位置
+float camera_polar[] = { 4, 0 };					// 摄像机极坐标
+float camera_target[] = { 0, 1, 0 };				// 摄像机目标
 float point[] = { 5, 5, 5, 1 };						// 点光源位置
 float spot[] = { 0, 8, 0 };							// 聚光灯位置
 float spot_target[] = { 0, 0, 0 };					// 聚光灯目标
 
+char message[70] = "Welcome!";
+
 GLint List = 0;
 
-GLfloat yellow[] = { 1.0, 1.0, 0.0, 1.0 };
 GLfloat red[] = { 1.0, 0.0, 0.0, 1.0 };
+GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
 GLfloat blue[] = { 0.0, 0.0, 1.0, 1.0 };
+GLfloat yellow[] = { 1.0, 1.0, 0.0, 1.0 };
+GLfloat turquoise[] = { 0.0, 1.0, 1.0, 1.0 };
 GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
-GLfloat point_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };	// 漫反射光默认为红色
+GLfloat point_diffuse[] = { 1.0, 1.0, 0.0, 1.0 };	// 漫反射光默认为黄色
+GLfloat* color = yellow;
+
+enum {
+	NOTHING,
+	RED,
+	GREEN,
+	BLUE,
+	DEFAULT,
+	DISABLE,
+	EXIT
+};
 
 void Draw_Leg() {
 	glScalef(1, 1, 3);
@@ -54,7 +73,7 @@ void Draw_Scene() {
 	glPushMatrix();
 	glTranslatef(teapot[0], teapot[1], teapot[2]);
 	glPushMatrix();
-	glTranslatef(0, 0, 4 + 1);
+	glTranslatef(0, 0, 4.75);
 	glRotatef(90, 1, 0, 0);
 	// 以下横x纵y深z
 	glRotatef(fTpRtt, 0, 1, 0);
@@ -97,7 +116,7 @@ void Draw_Scene() {
 GLint GenTableList() {
 	GLint lid = glGenLists(1);
 	glNewList(lid, GL_COMPILE);
-		Draw_Scene();
+	Draw_Scene();
 	glEndList();
 	return lid;
 }
@@ -107,19 +126,19 @@ void Draw_Scene_List() {
 }
 
 void updateView(int width, int height) {
-	glViewport(0,0,width,height);						// Reset The Current Viewport
+	glViewport(0, 0, width, height);					// Reset The Current Viewport
 
 	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
 	glLoadIdentity();									// Reset The Projection Matrix
 
-	float whRatio = (GLfloat)width/(GLfloat)height;
+	float whRatio = (GLfloat)width / (GLfloat)height;
 
 	if (bPersp) {
-		gluPerspective(45.0f, whRatio,0.1f,100.0f);
+		gluPerspective(45.0f, whRatio, 0.1f, 100.0f);
 		//glFrustum(-3, 3, -3, 3, 3,100);				// 此为透视投影的基本方法
 	}
 	else {
-		glOrtho(-3 ,3, -3, 3,-100,100);
+		glOrtho(-3, 3, -3, 3, -100, 100);
 	}
 
 	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
@@ -156,30 +175,28 @@ void normalkey(unsigned char k, int x, int y) {
 		break;
 	}
 	case 'a': {
-		//camera[X] -= 0.1;
 		camera_polar[A] -= 0.1;
 		break;
 	}
 	case 'd': {
-		//camera[X] += 0.1;
 		camera_polar[A] += 0.1;
 		break;
 	}
 	case 'w': {
-		camera[Y] += 0.1;
+		camera_target[Y] += 0.05;
+		camera[Y] += 0.05;
 		break;
 	}
 	case 's': {
-		camera[Y] -= 0.1;
+		camera_target[Y] -= 0.05;
+		camera[Y] -= 0.05;
 		break;
 	}
 	case 'z': {
-		//camera[Z] *= 0.95;
 		camera_polar[R] *= 0.95;
 		break;
 	}
 	case 'c': {
-		//camera[Z] *= 1.05;
 		camera_polar[R] *= 1.05;
 		break;
 	}
@@ -238,7 +255,6 @@ void normalkey(unsigned char k, int x, int y) {
 		break;
 	}
 	}
-	camera_target[Y] = 0.4 * camera[Y];
 	camera[X] = camera_polar[R] * sin(camera_polar[A]);
 	camera[Z] = camera_polar[R] * cos(camera_polar[A]);
 }
@@ -246,20 +262,20 @@ void normalkey(unsigned char k, int x, int y) {
 void specialkey(int k, int x, int y) {
 	switch (k) {
 	// 点光源位置相关操作
-	case 101: {
-		point[Z] += 0.2;
-		break;
-	}
-	case 103: {
-		point[Z] -= 0.2;
-		break;
-	}
 	case 100: {
 		point[X] -= 0.2;
 		break;
 	}
+	case 101: {
+		point[Z] -= 0.2;
+		break;
+	}
 	case 102: {
 		point[X] += 0.2;
+		break;
+	}
+	case 103: {
+		point[Z] += 0.2;
 		break;
 	}
 	case 104: {
@@ -267,16 +283,51 @@ void specialkey(int k, int x, int y) {
 		break;
 	}
 	case 105: {
-		point[Y] += 0.2;
+		point[Y] -= 0.2;
 		break;
 	}
+	}
+}
+
+void menu(int value) {
+	switch (value) {
+	case RED:
+		cout << "point light color is set to: RED." << endl;
+		color = red;
+		strcpy(message, "point light color changed.");
+		break;
+	case GREEN:
+		cout << "point light color is set to: GREEN." << endl;
+		color = green;
+		strcpy(message, "point light color changed.");
+		break;
+	case BLUE:
+		cout << "point light color is set to: BLUE." << endl;
+		color = blue;
+		strcpy(message, "point light color changed.");
+		break;
+	case DEFAULT:
+		cout << "point light color is set to: DEFAULT." << endl;
+		color = yellow;
+		strcpy(message, "point light color changed.");
+		break;
+	case EXIT:
+		cout << "Bye." << endl;
+		exit(0);
+	case DISABLE:
+		cout << "Menu is disabled. Press M to enable menu." << endl;
+		glutDetachMenu(GLUT_RIGHT_BUTTON);
+		strcpy(message, "Menu is disabled. Press M to enable menu.");
+		break;
 	}
 }
 
 void getStatus() {
 	static int frame = 0, time, timebase = 0;
 	static char fpstext[50];
-	static char lightposition[50];
+	static char cameraposition[100];
+	static char pointposition[100];
+	static char spottarget[100];
 
 	frame++;
 	time = glutGet(GLUT_ELAPSED_TIME);
@@ -286,43 +337,75 @@ void getStatus() {
 		timebase = time;
 		frame = 0;
 	}
-	sprintf(lightposition, "123 %s",
-		"sd");
+	sprintf(cameraposition, "camera position  %2.1f   %2.1f   %2.1f",
+		camera[X], camera[Y], camera[Z]);
+	sprintf(pointposition, "point position     %2.1f   %2.1f   %2.1f",
+		point[X] * 0.2, point[Y] * 0.2, point[Z] * 0.2);
+	sprintf(spottarget, "spot target         %2.1f   %2.1f   %2.1f",
+		spot_target[X], spot_target[Y], spot_target[Z]);
 
 	char *c;
 	glDisable(GL_DEPTH_TEST);
-	glMatrixMode(GL_PROJECTION);	// 选择投影矩阵
-	glPushMatrix();					// 保存原矩阵
-	glLoadIdentity();				// 装入单位矩阵
-	glOrtho(0, 480, 0, 480, -1, 1);	// 位置正投影
-	glMatrixMode(GL_MODELVIEW);		// 选择Modelview矩阵
-	glPushMatrix();					// 保存原矩阵
-	glLoadIdentity();				// 装入单位矩阵
-	glRasterPos2f(10, 100);
+	glMatrixMode(GL_PROJECTION);			// 选择投影矩阵
+	glPushMatrix();							// 保存原矩阵
+	glLoadIdentity();						// 装入单位矩阵
+	glOrtho(-480, 480, -480, 480, -1, 1);	// 设置裁减区域
+	glMatrixMode(GL_MODELVIEW);				// 选择Modelview矩阵
+	glPushMatrix();							// 保存原矩阵
+	glLoadIdentity();						// 装入单位矩阵
+	glRasterPos2f(-470, 440);
 	for (c = fpstext; *c != '\0'; c++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
 	}
-	glRasterPos2f(10, 80);
-	for (c = lightposition; *c != '\0'; c++) {
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
+	glRasterPos2f(-460, 390);
+	for (c = cameraposition; *c != '\0'; c++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
 	}
-	// 逆序切换MatrixMode，Why?
-	glMatrixMode(GL_PROJECTION);	// 选择投影矩阵
-	glPopMatrix();					// 重置为原保存矩阵
-	glMatrixMode(GL_MODELVIEW);		// 选择Modelview矩阵
-	glPopMatrix();					// 重置为原保存矩阵
+	glRasterPos2f(-460, 340);
+	for (c = pointposition; *c != '\0'; c++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+	}
+	glRasterPos2f(-460, 290);
+	for (c = spottarget; *c != '\0'; c++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+	}
+	glMatrixMode(GL_PROJECTION);			// 选择投影矩阵
+	glPopMatrix();							// 重置为原保存矩阵
+	glMatrixMode(GL_MODELVIEW);				// 选择Modelview矩阵
+	glPopMatrix();							// 重置为原保存矩阵
 	glEnable(GL_DEPTH_TEST);
 }
 
-void redraw()
-{
+void Draw_Light(GLfloat* center, GLfloat radius) {
+	glPushMatrix();
+	glRotatef(-90, 1, 0, 0);
+	glScalef(0.2, 0.2, 0.2);
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < 20; i++) {
+		glVertex3f(2 * radius * cos(2 * Pi / 20 * i) + center[X], radius * sin(2 * Pi / 20 * i) - center[Z], center[Y]);
+	}
+	glEnd();
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < 20; i++) {
+		glVertex3f(2 * radius * cos(2 * Pi / 20 * i) + center[X], - center[Z], radius * sin(2 * Pi / 20 * i) + center[Y]);
+	}
+	glEnd();
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < 20; i++) {
+		glVertex3f(center[X], radius * sin(2 * Pi / 20 * i) - center[Z], radius * cos(2 * Pi / 20 * i) + center[Y]);
+	}
+	glEnd();
+	glPopMatrix();
+}
 
+void redraw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();									// Reset The Current Modelview Matrix
 
 	gluLookAt(camera[X], camera[Y], camera[Z],
 		camera_target[X], camera_target[Y], camera_target[Z],
-		0, 1, 0);										// 摄像机（0，0，8）的视点中心（0, 0, 0），Y轴向上
+		0, 1, 0);										// 摄像机（0，0，4）的视点中心（0, 0, 0），Y轴向上
 
 	if (bWire) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -334,12 +417,13 @@ void redraw()
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
-
 	glLightfv(GL_LIGHT0, GL_POSITION, point);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, yellow);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, red);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, white);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, blue);
 	glEnable(GL_LIGHT0);
+
+	Draw_Light(point, 0.5);
 
 	glRotatef(fRotate, 0, 1.0f, 0);			// Rotate around Y axis
 	glRotatef(-90, 1, 0, 0);
@@ -350,17 +434,36 @@ void redraw()
 	if (bAnim) fRotate += 0.5f;
 	if (bRtt) {
 		List = GenTableList();
-		fTpRtt += 0.5f;
+		fTpRtt -= 0.8f;
 	}
 	glutSwapBuffers();
 }
 
-int main (int argc,  char *argv[])
-{
+void initMenu(void) {
+	glutCreateMenu(menu);
+
+	glutAddMenuEntry("Please select as quick as possible!", NOTHING);
+	glutAddMenuEntry("---------Change light color here---------", NOTHING);
+	glutAddMenuEntry("    Red", RED);
+	glutAddMenuEntry("    Green", GREEN);
+	glutAddMenuEntry("    Blue", BLUE);
+	glutAddMenuEntry("    Default", DEFAULT);
+	glutAddMenuEntry("------------------------------------------", NOTHING);
+	glutAddMenuEntry("Disable menu", DISABLE);
+	glutAddMenuEntry("------------------------------------------", NOTHING);
+	glutAddMenuEntry("Exit", EXIT);
+
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
+
+int main(int argc, char *argv[]) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowSize(480, 480);
 	int windowHandle = glutCreateWindow("Ex 5");
+
+	// Initiate the menu
+	initMenu();
 
 	glutDisplayFunc(redraw);
 	glutReshapeFunc(reshape);

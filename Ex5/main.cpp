@@ -7,6 +7,9 @@
 #include <string.h>
 #include <math.h>
 #include <iostream>
+#include <iomanip>
+
+#pragma warning(disable:4996)
 
 using namespace std;
 
@@ -71,45 +74,45 @@ void Draw_Scene() {
 	// 在这个函数范围内，横x深y纵z
 	// teapot
 	glPushMatrix();
-	glTranslatef(teapot[0], teapot[1], teapot[2]);
-	glPushMatrix();
-	glTranslatef(0, 0, 4.75);
-	glRotatef(90, 1, 0, 0);
-	// 以下横x纵y深z
-	glRotatef(fTpRtt, 0, 1, 0);
-	glutSolidTeapot(1);
-	glPopMatrix();
+		glTranslatef(teapot[X], teapot[Y], teapot[Z]);
+		glPushMatrix();
+			glTranslatef(0, 0, 4.75);
+			glRotatef(90, 1, 0, 0);
+			// 以下横x纵y深z
+			glRotatef(fTpRtt, 0, 1, 0);
+			glutSolidTeapot(1);
+		glPopMatrix();
 	glPopMatrix();
 
 	// table
 	glPushMatrix();
-	glTranslatef(0, 0, 3.5);
-	glScalef(5, 4, 1);
-	glutSolidCube(1.0);
+		glTranslatef(0, 0, 3.5);
+		glScalef(5, 4, 1);
+		glutSolidCube(1.0);
 	glPopMatrix();
 
 	// leg1
 	glPushMatrix();
-	glTranslatef(1.5, 1, 1.5);
-	Draw_Leg();
+		glTranslatef(1.5, 1, 1.5);
+		Draw_Leg();
 	glPopMatrix();
 
 	// leg2
 	glPushMatrix();
-	glTranslatef(-1.5, 1, 1.5);
-	Draw_Leg();
+		glTranslatef(-1.5, 1, 1.5);
+		Draw_Leg();
 	glPopMatrix();
 
 	// leg3
 	glPushMatrix();
-	glTranslatef(1.5, -1, 1.5);
-	Draw_Leg();
+		glTranslatef(1.5, -1, 1.5);
+		Draw_Leg();
 	glPopMatrix();
 
 	// leg4
 	glPushMatrix();
-	glTranslatef(-1.5, -1, 1.5);
-	Draw_Leg();
+		glTranslatef(-1.5, -1, 1.5);
+		Draw_Leg();
 	glPopMatrix();
 }
 
@@ -119,6 +122,10 @@ GLint GenTableList() {
 	Draw_Scene();
 	glEndList();
 	return lid;
+}
+
+void updateList() {
+	List = GenTableList();
 }
 
 void Draw_Scene_List() {
@@ -159,104 +166,209 @@ void idle() {
 	glutPostRedisplay();
 }
 
+void updateCamera() {
+	camera[X] = camera_polar[R] * sin(camera_polar[A]);
+	camera[Z] = camera_polar[R] * cos(camera_polar[A]);
+}
+
 void normalkey(unsigned char k, int x, int y) {
 	switch (k) {
 	// 全局操作
 	case 27:
+	case 'Q':
 	case 'q': {
+		cout << "Bye." << endl;
 		exit(0);
+		break;
+	}
+	case 'M':
+	case 'm': {
+		cout << "M pressed.\n\tRight click to check for menu items." << endl;
+		strcpy(message, "M pressed. Right click to check for menu items.");
+		glutAttachMenu(GLUT_RIGHT_BUTTON);
+		break;
+	}
+	case 'E':
+	case 'e': {
+		bRtt = !bRtt;
+		if (bRtt) {
+			cout << "E pressed.\n\tTeapot is rotating." << endl;
+			strcpy(message, "E pressed. Teapot is rotating.");
+		}
+		else {
+			cout << "E pressed.\n\tTeapot rotating is stopped." << endl;
+			strcpy(message, "Teapot rotating is stopped.");
+		}
+		break;
+	}
+	case 'O':
+	case 'o': {
+		bWire = !bWire;
+		if (bWire) {
+			cout << "O pressed.\n\tSwitch on line mode." << endl;
+			strcpy(message, "O pressed. Switch on line mode.");
+		}
+		else {
+			cout << "O pressed.\n\tSwitch off line mode." << endl;
+			strcpy(message, "O pressed. Switch off line mode.");
+		}
+		break;
+	}
+	case ' ': {
+		bAnim = !bAnim;
+		if (bAnim) {
+			cout << "Space pressed.\n\tThe whole model is rotating." << endl;
+			strcpy(message, "Space pressed. The whole model is rotating.");
+		}
+		else {
+			cout << "Space pressed.\n\tModel rotating is stopped." << endl;
+			strcpy(message, "Model rotating is stopped.");
+		}
 		break;
 	}
 
 	// 摄像机相关操作
+	case 'P':
 	case 'p': {
 		bPersp = !bPersp;
 		updateView(wHeight, wWidth);
 		break;
 	}
+	case 'A':
 	case 'a': {
 		camera_polar[A] -= 0.1;
+		updateCamera();
+		cout << fixed << setprecision(1) << "A pressed.\n\tPosition of camera is set to (" <<
+			camera[X] << ", " << camera[Y] << ", " << camera[Z] << ")." << endl;
+		strcpy(message, "A pressed. Watch carefully!");
 		break;
 	}
+	case 'D':
 	case 'd': {
 		camera_polar[A] += 0.1;
+		updateCamera();
+		cout << fixed << setprecision(1) << "D pressed.\n\tPosition of camera is set to (" <<
+			camera[X] << ", " << camera[Y] << ", " << camera[Z] << ")." << endl;
+		strcpy(message, "D pressed. Watch carefully!");
 		break;
 	}
+	case 'W':
 	case 'w': {
 		camera_target[Y] += 0.05;
 		camera[Y] += 0.05;
+		cout << fixed << setprecision(1) << "W pressed.\n\tPosition of camera is set to (" <<
+			camera[X] << ", " << camera[Y] << ", " << camera[Z] << ")." << endl;
+		strcpy(message, "W pressed. Watch carefully!");
 		break;
 	}
+	case 'S':
 	case 's': {
 		camera_target[Y] -= 0.05;
 		camera[Y] -= 0.05;
+		cout << fixed << setprecision(1) << "S pressed.\n\tPosition of camera is set to (" <<
+			camera[X] << ", " << camera[Y] << ", " << camera[Z] << ")." << endl;
+		strcpy(message, "S pressed. Watch carefully!");
 		break;
 	}
+	case 'Z':
 	case 'z': {
 		camera_polar[R] *= 0.95;
+		updateCamera();
+		cout << fixed << setprecision(1) << "Z pressed.\n\tPosition of camera is set to (" <<
+			camera[X] << ", " << camera[Y] << ", " << camera[Z] << ")." << endl;
+		strcpy(message, "Z pressed. Camera is moved...nearer!");
 		break;
 	}
+	case 'C':
 	case 'c': {
 		camera_polar[R] *= 1.05;
+		updateCamera();
+		cout << fixed << setprecision(1) << "C pressed.\n\tPosition of camera is set to (" <<
+			camera[X] << ", " << camera[Y] << ", " << camera[Z] << ")." << endl;
+		strcpy(message, "C pressed. Camera is moved...farther!");
 		break;
 	}
 
 	//茶壶相关操作
+	case 'L':
 	case 'l': {
 		if (teapot[X] <= 2) {
 			teapot[X] += 0.2;
 		}
+		cout << fixed << setprecision(1) << "L pressed.\n\tPosition of teapot is set to (" <<
+			teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
+		strcpy(message, "L pressed. Teapot is moved!");
+		updateList();
 		break;
 	}
+	case 'J':
 	case 'j': {
 		if (teapot[X] >= -2) {
 			teapot[X] -= 0.2;
 		}
+		cout << fixed << setprecision(1) << "J pressed.\n\tPosition of teapot is set to (" <<
+			teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
+		strcpy(message, "J pressed. Teapot is moved!");
+		updateList();
 		break;
 	}
+	case 'I':
 	case 'i': {
 		if (teapot[Y] <= 1.5) {
 			teapot[Y] += 0.2;
 		}
+		cout << fixed << setprecision(1) << "I pressed.\n\tPosition of teapot is set to (" <<
+			teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
+		strcpy(message, "I pressed. Teapot is moved!");
+		updateList();
 		break;
 	}
+	case 'K':
 	case 'k': {
 		if (teapot[Y] >= -1.5) {
 			teapot[Y] -= 0.2;
 		}
+		cout << fixed << setprecision(1) << "K pressed.\n\tPosition of teapot is set to (" <<
+			teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
+		strcpy(message, "K pressed. Teapot is moved!");
+		updateList();
 		break;
-	}
-	case 'e': {
-		bRtt = !bRtt;
-		break;
-	}
-	case ' ': {
-		bAnim = !bAnim; break;
-	}
-	case 'o': {
-		bWire = !bWire; break;
 	}
 
 	// 聚光灯目标操作
+	case 'T':
 	case 't': {
 		spot_target[Y] += 0.2;
+		cout << fixed << setprecision(1) << "T pressed.\n\tTarget of spot light is set to (" <<
+			spot_target[X] << ", " << spot_target[Y] << ", " << spot_target[Z] << ")." << endl;
+		strcpy(message, "T pressed. What will happen on the spot light?");
 		break;
 	}
+	case 'G':
 	case 'g': {
 		spot_target[Y] -= 0.2;
+		cout << fixed << setprecision(1) << "G pressed.\n\tTarget of spot light is set to (" <<
+			spot_target[X] << ", " << spot_target[Y] << ", " << spot_target[Z] << ")." << endl;
+		strcpy(message, "G pressed. What will happen on the spot light?");
 		break;
 	}
+	case 'F':
 	case 'f': {
 		spot_target[X] -= 0.2;
+		cout << fixed << setprecision(1) << "F pressed.\n\tTarget of spot light is set to (" <<
+			spot_target[X] << ", " << spot_target[Y] << ", " << spot_target[Z] << ")." << endl;
+		strcpy(message, "F pressed. What will happen on the spot light?");
 		break;
 	}
+	case 'H':
 	case 'h': {
 		spot_target[X] += 0.2;
+		cout << fixed << setprecision(1) << "H pressed.\n\tTarget of spot light is set to (" << 
+			spot_target[X] << ", " << spot_target[Y] << ", " << spot_target[Z] << ")." << endl;
+		strcpy(message, "H pressed. What will happen on the spot light?");
 		break;
 	}
 	}
-	camera[X] = camera_polar[R] * sin(camera_polar[A]);
-	camera[Z] = camera_polar[R] * cos(camera_polar[A]);
 }
 
 void specialkey(int k, int x, int y) {
@@ -264,26 +376,44 @@ void specialkey(int k, int x, int y) {
 	// 点光源位置相关操作
 	case 100: {
 		point[X] -= 0.2;
+		cout << fixed << setprecision(1) << "Left Arrow pressed.\n\tPosition of point light is set to (" <<
+			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
+		strcpy(message, "Left Arrow pressed. Pay attention to the point light.");
 		break;
 	}
 	case 101: {
 		point[Z] -= 0.2;
+		cout << fixed << setprecision(1) << "Up Arrow pressed.\n\tPosition of point light is set to (" <<
+			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
+		strcpy(message, "Up Arrow pressed. Pay attention to the point light.");
 		break;
 	}
 	case 102: {
 		point[X] += 0.2;
+		cout << fixed << setprecision(1) << "Right Arrow pressed.\n\tPosition of point light is set to (" <<
+			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
+		strcpy(message, "Right Arrow pressed. Pay attention to the point light.");
 		break;
 	}
 	case 103: {
 		point[Z] += 0.2;
+		cout << fixed << setprecision(1) << "Down Arrow pressed.\n\tPosition of point light is set to (" <<
+			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
+		strcpy(message, "Down Arrow pressed. Pay attention to the point light.");
 		break;
 	}
 	case 104: {
 		point[Y] += 0.2;
+		cout << fixed << setprecision(1) << "PageUp pressed.\n\tPosition of point light is set to (" <<
+			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
+		strcpy(message, "PageUp pressed. Pay attention to the point light.");
 		break;
 	}
 	case 105: {
 		point[Y] -= 0.2;
+		cout << fixed << setprecision(1) << "PageDown pressed.\n\tPosition of point light is set to (" <<
+			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
+		strcpy(message, "PageDown pressed. Pay attention to the point light.");
 		break;
 	}
 	}
@@ -292,33 +422,33 @@ void specialkey(int k, int x, int y) {
 void menu(int value) {
 	switch (value) {
 	case RED:
-		cout << "point light color is set to: RED." << endl;
+		cout << "Point light color is set to: RED." << endl;
 		color = red;
-		strcpy(message, "point light color changed.");
+		strcpy(message, "Point light color changed.");
 		break;
 	case GREEN:
-		cout << "point light color is set to: GREEN." << endl;
+		cout << "Point light color is set to: GREEN." << endl;
 		color = green;
-		strcpy(message, "point light color changed.");
+		strcpy(message, "Point light color changed.");
 		break;
 	case BLUE:
-		cout << "point light color is set to: BLUE." << endl;
+		cout << "Point light color is set to: BLUE." << endl;
 		color = blue;
-		strcpy(message, "point light color changed.");
+		strcpy(message, "Point light color changed.");
 		break;
 	case DEFAULT:
-		cout << "point light color is set to: DEFAULT." << endl;
+		cout << "Point light color is set to: DEFAULT." << endl;
 		color = yellow;
-		strcpy(message, "point light color changed.");
+		strcpy(message, "Point light color changed.");
 		break;
-	case EXIT:
-		cout << "Bye." << endl;
-		exit(0);
 	case DISABLE:
 		cout << "Menu is disabled. Press M to enable menu." << endl;
 		glutDetachMenu(GLUT_RIGHT_BUTTON);
 		strcpy(message, "Menu is disabled. Press M to enable menu.");
 		break;
+	case EXIT:
+		cout << "Bye." << endl;
+		exit(0);
 	}
 }
 
@@ -368,6 +498,10 @@ void getStatus() {
 	glRasterPos2f(-460, 290);
 	for (c = spottarget; *c != '\0'; c++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+	}
+	glRasterPos2f(-460, -460);
+	for (c = message; *c != '\0'; c++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
 	}
 	glMatrixMode(GL_PROJECTION);			// 选择投影矩阵
 	glPopMatrix();							// 重置为原保存矩阵
@@ -464,6 +598,8 @@ int main(int argc, char *argv[]) {
 
 	// Initiate the menu
 	initMenu();
+	// Initiate the display list
+	updateList();
 
 	glutDisplayFunc(redraw);
 	glutReshapeFunc(reshape);
@@ -471,7 +607,6 @@ int main(int argc, char *argv[]) {
 	glutSpecialFunc(specialkey);
 	glutIdleFunc(idle);
 
-	List = GenTableList();
 
 	glutMainLoop();
 	return 0;

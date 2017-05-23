@@ -26,6 +26,9 @@ float fRotate = 0.0f;
 float fScale = 1.0f;								// set inital scale value to 1.0f
 float fTpRtt = 0.0f;
 
+bool bpoint = true;									// 点光源开关
+bool bspot = true;									// 聚光灯开关
+bool blight = true;									// 灯光模式开关
 bool bPersp = true;									// 透视模式开关
 bool bWire = false;									// 线框模式开关
 bool bAnim = false;									// 整体旋转开关
@@ -39,13 +42,14 @@ float camera[] = { 0, 1, 4 };						// 摄像机位置
 float camera_polar[] = { 4, 0 };					// 摄像机极坐标
 float camera_target[] = { 0, 1, 0 };				// 摄像机目标
 float point[] = { 5, 5, 5, 1 };						// 点光源位置
-float spot[] = { 0, 8, 0 };							// 聚光灯位置
+float spot[] = { 0, 6, 0, 1 };							// 聚光灯位置
 float spot_target[] = { 0, 0, 0 };					// 聚光灯目标
 
 char message[70] = "Welcome!";
 
 GLint List = 0;
 
+GLfloat spot_cutoff = 6.0;
 GLfloat red[] = { 1.0, 0.0, 0.0, 1.0 };
 GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
 GLfloat blue[] = { 0.0, 0.0, 1.0, 1.0 };
@@ -294,78 +298,122 @@ void normalkey(unsigned char k, int x, int y) {
 	case 'l': {
 		if (teapot[X] <= 2) {
 			teapot[X] += 0.2;
+			cout << fixed << setprecision(1) << "L pressed.\n\tPosition of teapot is set to (" <<
+				teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
+			strcpy(message, "L pressed. Teapot is moved!");
+			updateList();
 		}
-		cout << fixed << setprecision(1) << "L pressed.\n\tPosition of teapot is set to (" <<
-			teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
-		strcpy(message, "L pressed. Teapot is moved!");
-		updateList();
+		else {
+			cout << "L pressed.\n\tOut of border!" << endl;
+			strcpy(message, "L pressed. Teapot is at the border!");
+		}
 		break;
 	}
 	case 'J':
 	case 'j': {
 		if (teapot[X] >= -2) {
 			teapot[X] -= 0.2;
+			cout << fixed << setprecision(1) << "J pressed.\n\tPosition of teapot is set to (" <<
+				teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
+			strcpy(message, "J pressed. Teapot is moved!");
+			updateList();
 		}
-		cout << fixed << setprecision(1) << "J pressed.\n\tPosition of teapot is set to (" <<
-			teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
-		strcpy(message, "J pressed. Teapot is moved!");
-		updateList();
+		else {
+			cout << "J pressed.\n\tOut of border!" << endl;
+			strcpy(message, "J pressed. Teapot is at the border!");
+		}
 		break;
 	}
 	case 'I':
 	case 'i': {
 		if (teapot[Y] <= 1.5) {
 			teapot[Y] += 0.2;
+			cout << fixed << setprecision(1) << "I pressed.\n\tPosition of teapot is set to (" <<
+				teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
+			strcpy(message, "I pressed. Teapot is moved!");
+			updateList();
 		}
-		cout << fixed << setprecision(1) << "I pressed.\n\tPosition of teapot is set to (" <<
-			teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
-		strcpy(message, "I pressed. Teapot is moved!");
-		updateList();
+		else {
+			cout << "I pressed.\n\tOut of border!" << endl;
+			strcpy(message, "I pressed. Teapot is at the border!");
+		}
 		break;
 	}
 	case 'K':
 	case 'k': {
 		if (teapot[Y] >= -1.5) {
 			teapot[Y] -= 0.2;
+			cout << fixed << setprecision(1) << "K pressed.\n\tPosition of teapot is set to (" <<
+				teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
+			strcpy(message, "K pressed. Teapot is moved!");
+			updateList();
 		}
-		cout << fixed << setprecision(1) << "K pressed.\n\tPosition of teapot is set to (" <<
-			teapot[X] << ", " << teapot[Y] << ", " << teapot[Z] << ")." << endl;
-		strcpy(message, "K pressed. Teapot is moved!");
-		updateList();
+		else {
+			cout << "K pressed.\n\tOut of border!" << endl;
+			strcpy(message, "K pressed. Teapot is at the border!");
+		}
 		break;
 	}
 
 	// 聚光灯目标操作
 	case 'T':
 	case 't': {
-		spot_target[Y] += 0.2;
+		spot_target[Z] -= 0.1;
 		cout << fixed << setprecision(1) << "T pressed.\n\tTarget of spot light is set to (" <<
 			spot_target[X] << ", " << spot_target[Y] << ", " << spot_target[Z] << ")." << endl;
-		strcpy(message, "T pressed. What will happen on the spot light?");
+		strcpy(message, "T pressed. What will happen to the spot light?");
 		break;
 	}
 	case 'G':
 	case 'g': {
-		spot_target[Y] -= 0.2;
+		spot_target[Z] += 0.1;
 		cout << fixed << setprecision(1) << "G pressed.\n\tTarget of spot light is set to (" <<
 			spot_target[X] << ", " << spot_target[Y] << ", " << spot_target[Z] << ")." << endl;
-		strcpy(message, "G pressed. What will happen on the spot light?");
+		strcpy(message, "G pressed. What will happen to the spot light?");
 		break;
 	}
 	case 'F':
 	case 'f': {
-		spot_target[X] -= 0.2;
+		spot_target[X] -= 0.1;
 		cout << fixed << setprecision(1) << "F pressed.\n\tTarget of spot light is set to (" <<
 			spot_target[X] << ", " << spot_target[Y] << ", " << spot_target[Z] << ")." << endl;
-		strcpy(message, "F pressed. What will happen on the spot light?");
+		strcpy(message, "F pressed. What will happen to the spot light?");
 		break;
 	}
 	case 'H':
 	case 'h': {
-		spot_target[X] += 0.2;
+		spot_target[X] += 0.1;
 		cout << fixed << setprecision(1) << "H pressed.\n\tTarget of spot light is set to (" << 
 			spot_target[X] << ", " << spot_target[Y] << ", " << spot_target[Z] << ")." << endl;
-		strcpy(message, "H pressed. What will happen on the spot light?");
+		strcpy(message, "H pressed. What will happen to the spot light?");
+		break;
+	}
+
+	// 聚光灯圆锥角度
+	case 'R':
+	case 'r': {
+		if (spot_cutoff >= 1) {
+			spot_cutoff -= 0.1;
+			cout << "R pressed.\n\tCut Off is set to " << spot_cutoff << " degrees." << endl;
+			strcpy(message, "R pressed. The spot light will light less.");
+		}
+		else {
+			cout << "R pressed.\n\tOut of range!" << endl;
+			strcpy(message, "R pressed. Cut off is at its minimum!");
+		}
+		break;
+	}
+	case 'Y':
+	case 'y': {
+		if (spot_cutoff <= 179) {
+			spot_cutoff += 0.1;
+			cout << "Y pressed.\n\tCut Off is set to " << spot_cutoff << " degrees." << endl;
+			strcpy(message, "Y pressed. The spot light will light more.");
+		}
+		else {
+			cout << "Y pressed.\n\tOut of range!" << endl;
+			strcpy(message, "Y pressed. Cut off is at its maximum!");
+		}
 		break;
 	}
 	}
@@ -533,13 +581,33 @@ void Draw_Light(GLfloat* center, GLfloat radius) {
 	glPopMatrix();
 }
 
+void initPoint() {
+	glLightfv(GL_LIGHT0, GL_POSITION, point);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, white);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, blue);
+	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.5f);
+	glEnable(GL_LIGHT0);
+}
+
+void initSpot() {
+	GLfloat direction[] = { spot_target[X] - spot[X], spot_target[Y] - spot[Y], spot_target[Z] - spot[Z] };
+	glLightfv(GL_LIGHT1, GL_POSITION, spot);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, direction);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, spot_cutoff);
+	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 30.0f);
+	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.5f);
+	glEnable(GL_LIGHT1);
+}
+
 void redraw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();									// Reset The Current Modelview Matrix
 
 	gluLookAt(camera[X], camera[Y], camera[Z],
 		camera_target[X], camera_target[Y], camera_target[Z],
-		0, 1, 0);										// 摄像机（0，0，4）的视点中心（0, 0, 0），Y轴向上
+		0, 1, 0);										// 摄像机（0，1，4）的视点中心（0, 1, 0），Y轴向上
 
 	if (bWire) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -550,14 +618,19 @@ void redraw() {
 
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-	glLightfv(GL_LIGHT0, GL_POSITION, point);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, white);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, blue);
-	glEnable(GL_LIGHT0);
+	if (blight) {
+		glEnable(GL_LIGHTING);
+		if (bpoint) {
+			initPoint();
+		}
+		if (bspot) {
+			initSpot();
+		}
+	}
 
 	Draw_Light(point, 0.5);
+	Draw_Light(spot, 0.25);
+	Draw_Light(spot_target, 0.25);
 
 	glRotatef(fRotate, 0, 1.0f, 0);			// Rotate around Y axis
 	glRotatef(-90, 1, 0, 0);

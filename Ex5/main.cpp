@@ -16,15 +16,14 @@ using namespace std;
 #define X 0
 #define Y 1
 #define Z 2
-#define W 3
 #define R 0
 #define A 1
 #define Pi 3.1415926
 
 float fTranslate;
-float fRotate = 0.0f;
-float fScale = 1.0f;								// set inital scale value to 1.0f
-float fTpRtt = 0.0f;
+float fRotate = 0.0;
+float fScale = 1.0;									// set inital scale value to 1.0
+float fTpRtt = 0.0;
 
 bool bpoint = true;									// 点光源开关
 bool bspot = true;									// 聚光灯开关
@@ -70,80 +69,80 @@ enum {
 	EXIT
 };
 
-void Draw_Leg() {
+void drawLeg() {
 	glScalef(1, 1, 3);
 	glutSolidCube(1.0);
 }
 
-void Draw_Scene() {
+void drawScene() {
 	glPushAttrib(GL_LIGHTING_BIT);
-
-	// 在这个函数范围内，横x深y纵z
-	// teapot
-	glPushMatrix();
-		glTranslatef(teapot[X], teapot[Y], teapot[Z]);
+		// 在这个函数范围内，横x深y纵z
+		// teapot
 		glPushMatrix();
-			glTranslatef(0, 0, 4.75);
-			glRotatef(90, 1, 0, 0);
-			// 以下横x纵y深z
-			glRotatef(fTpRtt, 0, 1, 0);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, black);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, golden);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, white);
-			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 80);
-			glutSolidTeapot(1);
+			glTranslatef(teapot[X], teapot[Y], teapot[Z]);
+			glPushMatrix();
+				glTranslatef(0, 0, 4.75);
+				glRotatef(90, 1, 0, 0);
+				// 以下横x纵y深z
+				glRotatef(fTpRtt, 0, 1, 0);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, black);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, golden);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, white);
+				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 80);
+				glutSolidTeapot(1);
+			glPopMatrix();
 		glPopMatrix();
-	glPopMatrix();
 
-	// table
-	glPushMatrix();
-		glTranslatef(0, 0, 3.5);
-		glScalef(5, 4, 1);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, red);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
-		glutSolidCube(1.0);
-	glPopMatrix();
+		// table
+		glPushMatrix();
+			glTranslatef(0, 0, 3.5);
+			glScalef(5, 4, 1);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, red);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
+			glutSolidCube(1.0);
+		glPopMatrix();
 
-	// leg1
-	glPushMatrix();
-		glTranslatef(1.5, 1, 1.5);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, green);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
-		Draw_Leg();
-	glPopMatrix();
+		// leg1
+		glPushMatrix();
+			glTranslatef(1.5, 1, 1.5);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, green);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
+			drawLeg();
+		glPopMatrix();
 
-	// leg2
-	glPushMatrix();
-		glTranslatef(-1.5, 1, 1.5);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, yellow);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
-		Draw_Leg();
-	glPopMatrix();
+		// leg2
+		glPushMatrix();
+			glTranslatef(-1.5, 1, 1.5);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, yellow);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
+			drawLeg();
+		glPopMatrix();
 
-	// leg3
-	glPushMatrix();
-		glTranslatef(1.5, -1, 1.5);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, turquoise);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
-		Draw_Leg();
-	glPopMatrix();
+		// leg3
+		glPushMatrix();
+			glTranslatef(1.5, -1, 1.5);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, turquoise);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
+			drawLeg();
+		glPopMatrix();
 
-	// leg4
-	glPushMatrix();
-		glTranslatef(-1.5, -1, 1.5);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, blue);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
-		Draw_Leg();
-	glPopMatrix();
-
+		// leg4
+		glPushMatrix();
+			glTranslatef(-1.5, -1, 1.5);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, blue);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
+			drawLeg();
+		glPopMatrix();
 	glPopAttrib();
 }
 
 GLint GenTableList() {
 	GLint lid = glGenLists(1);
+
 	glNewList(lid, GL_COMPILE);
-	Draw_Scene();
+		drawScene();
 	glEndList();
+
 	return lid;
 }
 
@@ -151,7 +150,7 @@ void updateList() {
 	List = GenTableList();
 }
 
-void Draw_Scene_List() {
+void callList() {
 	glCallList(List);
 }
 
@@ -194,7 +193,7 @@ void updateCamera() {
 	camera[Z] = camera_polar[R] * cos(camera_polar[A]);
 }
 
-void normalkey(unsigned char k, int x, int y) {
+void processNormalKey(unsigned char k, int x, int y) {
 	switch (k) {
 	// 退出程序
 	case 27:
@@ -468,46 +467,46 @@ void normalkey(unsigned char k, int x, int y) {
 	}
 }
 
-void specialkey(int k, int x, int y) {
+void processSpecialKey(int k, int x, int y) {
 	switch (k) {
 	// 点光源位置相关操作
 	case 100: {
-		point[X] -= 0.2;
+		point[X] -= 0.1;
 		cout << fixed << setprecision(1) << "Left Arrow pressed.\n\tPosition of point light is set to (" <<
 			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
 		strcpy(message, "Left Arrow pressed. Pay attention to the point light.");
 		break;
 	}
 	case 101: {
-		point[Z] -= 0.2;
+		point[Z] -= 0.1;
 		cout << fixed << setprecision(1) << "Up Arrow pressed.\n\tPosition of point light is set to (" <<
 			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
 		strcpy(message, "Up Arrow pressed. Pay attention to the point light.");
 		break;
 	}
 	case 102: {
-		point[X] += 0.2;
+		point[X] += 0.1;
 		cout << fixed << setprecision(1) << "Right Arrow pressed.\n\tPosition of point light is set to (" <<
 			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
 		strcpy(message, "Right Arrow pressed. Pay attention to the point light.");
 		break;
 	}
 	case 103: {
-		point[Z] += 0.2;
+		point[Z] += 0.1;
 		cout << fixed << setprecision(1) << "Down Arrow pressed.\n\tPosition of point light is set to (" <<
 			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
 		strcpy(message, "Down Arrow pressed. Pay attention to the point light.");
 		break;
 	}
 	case 104: {
-		point[Y] += 0.2;
+		point[Y] += 0.1;
 		cout << fixed << setprecision(1) << "PageUp pressed.\n\tPosition of point light is set to (" <<
 			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
 		strcpy(message, "PageUp pressed. Pay attention to the point light.");
 		break;
 	}
 	case 105: {
-		point[Y] -= 0.2;
+		point[Y] -= 0.1;
 		cout << fixed << setprecision(1) << "PageDown pressed.\n\tPosition of point light is set to (" <<
 			point[X] << ", " << point[Y] << ", " << point[Z] << ")." << endl;
 		strcpy(message, "PageDown pressed. Pay attention to the point light.");
@@ -516,7 +515,7 @@ void specialkey(int k, int x, int y) {
 	}
 }
 
-void menu(int value) {
+void processMenu(int value) {
 	switch (value) {
 	case RED:
 		cout << "Point light color is set to: RED." << endl;
@@ -549,7 +548,7 @@ void menu(int value) {
 	}
 }
 
-void getStatus() {
+void showSysStatus() {
 	static int frame = 0, time, timebase = 0;
 	static char fpstext[50];
 	static char cameraposition[100];
@@ -560,7 +559,7 @@ void getStatus() {
 	time = glutGet(GLUT_ELAPSED_TIME);
 	if (time - timebase > 1000) {
 		sprintf(fpstext, "FPS:%4.2f",
-			frame*1000.0 / (time - timebase));
+			frame * 1000.0 / (time - timebase));
 		timebase = time;
 		frame = 0;
 	}
@@ -610,27 +609,27 @@ void getStatus() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Draw_Light(GLfloat* center, GLfloat radius) {
+void drawLight(GLfloat* center, GLfloat radius) {
 	glPushMatrix();
-	glTranslatef(center[X], center[Y], center[Z]);
-	glRotatef(-90, 1, 0, 0);
-	glScalef(0.2, 0.2, 0.2);
-	glColor3f(1.0, 1.0, 1.0);
-	glBegin(GL_LINE_LOOP);
-	for (int i = 0; i < 20; i++) {
-		glVertex3f(2 * radius * cos(2 * Pi / 20 * i), radius * sin(2 * Pi / 20 * i), 0);
-	}
-	glEnd();
-	glBegin(GL_LINE_LOOP);
-	for (int i = 0; i < 20; i++) {
-		glVertex3f(2 * radius * cos(2 * Pi / 20 * i), 0, radius * sin(2 * Pi / 20 * i));
-	}
-	glEnd();
-	glBegin(GL_LINE_LOOP);
-	for (int i = 0; i < 20; i++) {
-		glVertex3f(0, radius * sin(2 * Pi / 20 * i), radius * cos(2 * Pi / 20 * i));
-	}
-	glEnd();
+		glTranslatef(center[X], center[Y], center[Z]);
+		glRotatef(-90, 1, 0, 0);
+		glScalef(0.2, 0.2, 0.2);
+		glColor3f(1.0, 1.0, 1.0);
+		glBegin(GL_LINE_LOOP);
+			for (int i = 0; i < 20; i++) {
+				glVertex3f(2 * radius * cos(2 * Pi / 20 * i), radius * sin(2 * Pi / 20 * i), 0);
+			}
+		glEnd();
+		glBegin(GL_LINE_LOOP);
+			for (int i = 0; i < 20; i++) {
+				glVertex3f(2 * radius * cos(2 * Pi / 20 * i), 0, radius * sin(2 * Pi / 20 * i));
+			}
+		glEnd();
+		glBegin(GL_LINE_LOOP);
+			for (int i = 0; i < 20; i++) {
+				glVertex3f(0, radius * sin(2 * Pi / 20 * i), radius * cos(2 * Pi / 20 * i));
+			}
+		glEnd();
 	glPopMatrix();
 }
 
@@ -643,6 +642,12 @@ void initPoint() {
 	glEnable(GL_LIGHT0);
 }
 
+void updatePoint() {
+	glLightfv(GL_LIGHT0, GL_POSITION, point);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
+	glEnable(GL_LIGHT0);
+}
+
 void initSpot() {
 	GLfloat direction[] = { spot_target[X] - spot[X], spot_target[Y] - spot[Y], spot_target[Z] - spot[Z] };
 	glLightfv(GL_LIGHT1, GL_POSITION, spot);
@@ -651,17 +656,25 @@ void initSpot() {
 	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, direction);
 	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, spot_cutoff);
 	glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 30.0f);
-	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.5f);
+	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 0.5f);
+	glEnable(GL_LIGHT1);
+}
+
+void updateSpot() {
+	GLfloat direction[] = { spot_target[X] - spot[X], spot_target[Y] - spot[Y], spot_target[Z] - spot[Z] };
+	glLightfv(GL_LIGHT1, GL_POSITION, spot);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, direction);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, spot_cutoff);
 	glEnable(GL_LIGHT1);
 }
 
 void redraw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();									// Reset The Current Modelview Matrix
+	glLoadIdentity();						// Reset The Current Modelview Matrix
 
 	gluLookAt(camera[X], camera[Y], camera[Z],
 		camera_target[X], camera_target[Y], camera_target[Z],
-		0, 1, 0);										// 摄像机（0，1，4）的视点中心（0, 1, 0），Y轴向上
+		0, 1, 0);							// 摄像机（0，1，4）的视点中心（0, 1, 0），Y轴向上
 
 	if (bWire) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -670,42 +683,45 @@ void redraw() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	glEnable(GL_NORMALIZE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 	if (bpoint) {
-		initPoint();
-		Draw_Light(point, 0.5);
+		updatePoint();						// 更新点光源信息并启用
+		drawLight(point, 0.5);
 	}
 	else {
 		glDisable(GL_LIGHT0);
 	}
 	if (bspot) {
-		initSpot();
-		Draw_Light(spot, 0.25);
-		Draw_Light(spot_target, 0.25);
+		updateSpot();						// 更新聚光灯信息并启用
+		drawLight(spot, 0.25);
+		drawLight(spot_target, 0.25);
 	}
 	else {
 		glDisable(GL_LIGHT1);
 	}
 
-	glRotatef(fRotate, 0, 1.0f, 0);			// Rotate around Y axis
+	glRotatef(fRotate, 0, 1, 0);			// Rotate around Y axis
 	glRotatef(-90, 1, 0, 0);
 	glScalef(0.2, 0.2, 0.2);
-	Draw_Scene_List();						// Draw Scene with display list
-	getStatus();							// Get status of FPS and lights
+	callList();								// Draw Scene with display list
+	showSysStatus();						// Show information like fps, location and message.
 
-	if (bAnim) fRotate += 0.5f;
+	if (bAnim) fRotate += 0.5;
 	if (bRtt) {
 		List = GenTableList();
-		fTpRtt -= 0.8f;
+		fTpRtt -= 0.8;
 	}
 	glutSwapBuffers();
 }
 
+void initLight() {
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+}
+
 void initMenu(void) {
-	glutCreateMenu(menu);
+	glutCreateMenu(processMenu);
 
 	glutAddMenuEntry("Please select as quick as possible!", NOTHING);
 	glutAddMenuEntry("---------Change light color here---------", NOTHING);
@@ -727,15 +743,19 @@ int main(int argc, char *argv[]) {
 	glutInitWindowSize(480, 480);
 	int windowHandle = glutCreateWindow("Ex 5");
 
-	// Initiate the menu
+	// Initiate the processMenu
 	initMenu();
 	// Initiate the display list
-	updateList();
+	List = GenTableList();
+	// Initiate the Lights
+	initLight();
+	initPoint();
+	initSpot();
 
 	glutDisplayFunc(redraw);
 	glutReshapeFunc(reshape);
-	glutKeyboardFunc(normalkey);
-	glutSpecialFunc(specialkey);
+	glutKeyboardFunc(processNormalKey);
+	glutSpecialFunc(processSpecialKey);
 	glutIdleFunc(idle);
 
 	glutMainLoop();

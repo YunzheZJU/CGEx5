@@ -28,7 +28,6 @@ float fTpRtt = 0.0f;
 
 bool bpoint = true;									// 点光源开关
 bool bspot = true;									// 聚光灯开关
-bool blight = true;									// 灯光模式开关
 bool bPersp = true;									// 透视模式开关
 bool bWire = false;									// 线框模式开关
 bool bAnim = false;									// 整体旋转开关
@@ -177,7 +176,7 @@ void updateCamera() {
 
 void normalkey(unsigned char k, int x, int y) {
 	switch (k) {
-	// 全局操作
+	// 退出程序
 	case 27:
 	case 'Q':
 	case 'q': {
@@ -185,6 +184,7 @@ void normalkey(unsigned char k, int x, int y) {
 		exit(0);
 		break;
 	}
+	// 显示菜单
 	case 'M':
 	case 'm': {
 		cout << "M pressed.\n\tRight click to check for menu items." << endl;
@@ -192,19 +192,7 @@ void normalkey(unsigned char k, int x, int y) {
 		glutAttachMenu(GLUT_RIGHT_BUTTON);
 		break;
 	}
-	case 'E':
-	case 'e': {
-		bRtt = !bRtt;
-		if (bRtt) {
-			cout << "E pressed.\n\tTeapot is rotating." << endl;
-			strcpy(message, "E pressed. Teapot is rotating.");
-		}
-		else {
-			cout << "E pressed.\n\tTeapot rotating is stopped." << endl;
-			strcpy(message, "Teapot rotating is stopped.");
-		}
-		break;
-	}
+	// 线框模式
 	case 'O':
 	case 'o': {
 		bWire = !bWire;
@@ -218,6 +206,21 @@ void normalkey(unsigned char k, int x, int y) {
 		}
 		break;
 	}
+	// 转动茶壶
+	case 'E':
+	case 'e': {
+		bRtt = !bRtt;
+		if (bRtt) {
+			cout << "E pressed.\n\tTeapot is rotating." << endl;
+			strcpy(message, "E pressed. Teapot is rotating.");
+		}
+		else {
+			cout << "E pressed.\n\tTeapot rotating is stopped." << endl;
+			strcpy(message, "Teapot rotating is stopped.");
+		}
+		break;
+	}
+	// 整体转动
 	case ' ': {
 		bAnim = !bAnim;
 		if (bAnim) {
@@ -230,8 +233,34 @@ void normalkey(unsigned char k, int x, int y) {
 		}
 		break;
 	}
+	// 关闭点光源
+	case '0': {
+		bpoint = !bpoint;
+		if (bpoint) {
+			cout << "0 pressed.\n\tTurn on point light." << endl;
+			strcpy(message, "0 pressed. Turn on point light.");
+		}
+		else {
+			cout << "0 pressed.\n\tTurn off point light." << endl;
+			strcpy(message, "0 pressed. Turn off point light.");
+		}
+		break;
+	}
+	// 关闭聚光灯
+	case '1': {
+		bspot = !bspot;
+		if (bspot) {
+			cout << "1 pressed.\n\tTurn on spot light." << endl;
+			strcpy(message, "0 pressed. Turn on spot light.");
+		}
+		else {
+			cout << "1 pressed.\n\tTurn off spot light." << endl;
+			strcpy(message, "0 pressed. Turn off spot light.");
+		}
+		break;
+	}
 
-	// 摄像机相关操作
+	// 摄像机移动
 	case 'P':
 	case 'p': {
 		bPersp = !bPersp;
@@ -293,7 +322,7 @@ void normalkey(unsigned char k, int x, int y) {
 		break;
 	}
 
-	//茶壶相关操作
+	//茶壶平移
 	case 'L':
 	case 'l': {
 		if (teapot[X] <= 2) {
@@ -355,7 +384,7 @@ void normalkey(unsigned char k, int x, int y) {
 		break;
 	}
 
-	// 聚光灯目标操作
+	// 聚光灯目标平移
 	case 'T':
 	case 't': {
 		spot_target[Z] -= 0.1;
@@ -618,19 +647,22 @@ void redraw() {
 
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_DEPTH_TEST);
-	if (blight) {
-		glEnable(GL_LIGHTING);
-		if (bpoint) {
-			initPoint();
-		}
-		if (bspot) {
-			initSpot();
-		}
+	glEnable(GL_LIGHTING);
+	if (bpoint) {
+		initPoint();
+		Draw_Light(point, 0.5);
 	}
-
-	Draw_Light(point, 0.5);
-	Draw_Light(spot, 0.25);
-	Draw_Light(spot_target, 0.25);
+	else {
+		glDisable(GL_LIGHT0);
+	}
+	if (bspot) {
+		initSpot();
+		Draw_Light(spot, 0.25);
+		Draw_Light(spot_target, 0.25);
+	}
+	else {
+		glDisable(GL_LIGHT1);
+	}
 
 	glRotatef(fRotate, 0, 1.0f, 0);			// Rotate around Y axis
 	glRotatef(-90, 1, 0, 0);
@@ -680,9 +712,6 @@ int main(int argc, char *argv[]) {
 	glutSpecialFunc(specialkey);
 	glutIdleFunc(idle);
 
-
 	glutMainLoop();
 	return 0;
 }
-
-

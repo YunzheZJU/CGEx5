@@ -40,23 +40,25 @@ float teapot[] = { 0, 0, 0 };						// 茶壶位置
 float camera[] = { 0, 1, 4 };						// 摄像机位置
 float camera_polar[] = { 4, 0 };					// 摄像机极坐标
 float camera_target[] = { 0, 1, 0 };				// 摄像机目标
-float point[] = { 5, 5, 5, 1 };						// 点光源位置
-float spot[] = { 0, 6, 0, 1 };							// 聚光灯位置
+float point[] = { 1, 1, 1, 1 };						// 点光源位置
+float spot[] = { 0, 3, 0, 1 };						// 聚光灯位置
 float spot_target[] = { 0, 0, 0 };					// 聚光灯目标
 
 char message[70] = "Welcome!";
 
 GLint List = 0;
 
-GLfloat spot_cutoff = 6.0;
+GLfloat spot_cutoff = 8.6;
 GLfloat red[] = { 1.0, 0.0, 0.0, 1.0 };
 GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
 GLfloat blue[] = { 0.0, 0.0, 1.0, 1.0 };
 GLfloat yellow[] = { 1.0, 1.0, 0.0, 1.0 };
 GLfloat turquoise[] = { 0.0, 1.0, 1.0, 1.0 };
+GLfloat golden[] = { 1.0, 0.843, 0.0, 1.0 };
 GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
+GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
 GLfloat point_diffuse[] = { 1.0, 1.0, 0.0, 1.0 };	// 漫反射光默认为黄色
-GLfloat* color = yellow;
+GLfloat* color = white;
 
 enum {
 	NOTHING,
@@ -74,6 +76,8 @@ void Draw_Leg() {
 }
 
 void Draw_Scene() {
+	glPushAttrib(GL_LIGHTING_BIT);
+
 	// 在这个函数范围内，横x深y纵z
 	// teapot
 	glPushMatrix();
@@ -83,6 +87,10 @@ void Draw_Scene() {
 			glRotatef(90, 1, 0, 0);
 			// 以下横x纵y深z
 			glRotatef(fTpRtt, 0, 1, 0);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, black);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, golden);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, white);
+			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 80);
 			glutSolidTeapot(1);
 		glPopMatrix();
 	glPopMatrix();
@@ -91,32 +99,44 @@ void Draw_Scene() {
 	glPushMatrix();
 		glTranslatef(0, 0, 3.5);
 		glScalef(5, 4, 1);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, red);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
 		glutSolidCube(1.0);
 	glPopMatrix();
 
 	// leg1
 	glPushMatrix();
 		glTranslatef(1.5, 1, 1.5);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, green);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
 		Draw_Leg();
 	glPopMatrix();
 
 	// leg2
 	glPushMatrix();
 		glTranslatef(-1.5, 1, 1.5);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, yellow);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
 		Draw_Leg();
 	glPopMatrix();
 
 	// leg3
 	glPushMatrix();
 		glTranslatef(1.5, -1, 1.5);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, turquoise);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
 		Draw_Leg();
 	glPopMatrix();
 
 	// leg4
 	glPushMatrix();
 		glTranslatef(-1.5, -1, 1.5);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, blue);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, black);
 		Draw_Leg();
 	glPopMatrix();
+
+	glPopAttrib();
 }
 
 GLint GenTableList() {
@@ -547,7 +567,7 @@ void getStatus() {
 	sprintf(cameraposition, "camera position  %2.1f   %2.1f   %2.1f",
 		camera[X], camera[Y], camera[Z]);
 	sprintf(pointposition, "point position     %2.1f   %2.1f   %2.1f",
-		point[X] * 0.2, point[Y] * 0.2, point[Z] * 0.2);
+		point[X], point[Y], point[Z]);
 	sprintf(spottarget, "spot target         %2.1f   %2.1f   %2.1f",
 		spot_target[X], spot_target[Y], spot_target[Z]);
 
@@ -560,19 +580,21 @@ void getStatus() {
 	glMatrixMode(GL_MODELVIEW);				// 选择Modelview矩阵
 	glPushMatrix();							// 保存原矩阵
 	glLoadIdentity();						// 装入单位矩阵
+	glPushAttrib(GL_LIGHTING_BIT);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, white);
 	glRasterPos2f(-470, 440);
 	for (c = fpstext; *c != '\0'; c++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
 	}
-	glRasterPos2f(-460, 390);
+	glRasterPos2f(110, 440);
 	for (c = cameraposition; *c != '\0'; c++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
 	}
-	glRasterPos2f(-460, 340);
+	glRasterPos2f(110, 390);
 	for (c = pointposition; *c != '\0'; c++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
 	}
-	glRasterPos2f(-460, 290);
+	glRasterPos2f(110, 340);
 	for (c = spottarget; *c != '\0'; c++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
 	}
@@ -580,6 +602,7 @@ void getStatus() {
 	for (c = message; *c != '\0'; c++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
 	}
+	glPopAttrib();
 	glMatrixMode(GL_PROJECTION);			// 选择投影矩阵
 	glPopMatrix();							// 重置为原保存矩阵
 	glMatrixMode(GL_MODELVIEW);				// 选择Modelview矩阵
@@ -589,22 +612,23 @@ void getStatus() {
 
 void Draw_Light(GLfloat* center, GLfloat radius) {
 	glPushMatrix();
+	glTranslatef(center[X], center[Y], center[Z]);
 	glRotatef(-90, 1, 0, 0);
 	glScalef(0.2, 0.2, 0.2);
 	glColor3f(1.0, 1.0, 1.0);
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < 20; i++) {
-		glVertex3f(2 * radius * cos(2 * Pi / 20 * i) + center[X], radius * sin(2 * Pi / 20 * i) - center[Z], center[Y]);
+		glVertex3f(2 * radius * cos(2 * Pi / 20 * i), radius * sin(2 * Pi / 20 * i), 0);
 	}
 	glEnd();
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < 20; i++) {
-		glVertex3f(2 * radius * cos(2 * Pi / 20 * i) + center[X], - center[Z], radius * sin(2 * Pi / 20 * i) + center[Y]);
+		glVertex3f(2 * radius * cos(2 * Pi / 20 * i), 0, radius * sin(2 * Pi / 20 * i));
 	}
 	glEnd();
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < 20; i++) {
-		glVertex3f(center[X], radius * sin(2 * Pi / 20 * i) - center[Z], radius * cos(2 * Pi / 20 * i) + center[Y]);
+		glVertex3f(0, radius * sin(2 * Pi / 20 * i), radius * cos(2 * Pi / 20 * i));
 	}
 	glEnd();
 	glPopMatrix();
@@ -622,6 +646,7 @@ void initPoint() {
 void initSpot() {
 	GLfloat direction[] = { spot_target[X] - spot[X], spot_target[Y] - spot[Y], spot_target[Z] - spot[Z] };
 	glLightfv(GL_LIGHT1, GL_POSITION, spot);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, white);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
 	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, direction);
 	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, spot_cutoff);
@@ -648,6 +673,7 @@ void redraw() {
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
+	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 	if (bpoint) {
 		initPoint();
 		Draw_Light(point, 0.5);

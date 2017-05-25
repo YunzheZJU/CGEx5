@@ -47,7 +47,7 @@ GLfloat teapot[] = { 0, 0, 0 };				// Position of teapot
 GLfloat camera[] = { 0, 1, 4 };				// Position of camera
 GLfloat camera_polar[] = { 4, 0 };			// Polar coordinates of camera
 GLfloat camera_target[] = { 0, 1, 0 };		// Position of target of camera
-GLfloat point[] = { 1, 1, 1, 1 };			// Position of point light
+GLfloat point[] = { 1, 1.75, 1, 1 };			// Position of point light
 GLfloat spot[] = { 0, 3, 0, 1 };			// Position of spot light
 GLfloat spot_target[] = { 0, 0, 0 };		// Position of target of spot light
 
@@ -68,10 +68,10 @@ GLfloat black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat spot_cutoff = 8.6f;					// Cut off degree of spot light
 // Define colors for lights
 GLfloat point_white[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat point_red[] = { 1.0f, 0.1f, 0.1f, 1.0f };
-GLfloat point_green[] = { 0.1f, 1.0f, 0.1f, 1.0f };
-GLfloat point_blue[] = { 0.1f, 0.1f, 1.0f, 1.0f };
-GLfloat point_yellow[] = { 1.0f, 1.0f, 0.1f, 1.0f };
+GLfloat point_red[] = { 1.0f, 0.2f, 0.2f, 1.0f };
+GLfloat point_green[] = { 0.2f, 1.0f, 0.2f, 1.0f };
+GLfloat point_blue[] = { 0.2f, 0.2f, 1.0f, 1.0f };
+GLfloat point_yellow[] = { 1.0f, 1.0f, 0.2f, 1.0f };
 // Initiate the color of point light
 GLfloat* point_color = point_white;			// Pointer for current color of point light
 
@@ -81,6 +81,7 @@ enum {
 	RED,
 	GREEN,
 	BLUE,
+	YELLOW,
 	DEFAULT,
 	DISABLE,
 	EXIT

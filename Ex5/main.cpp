@@ -468,10 +468,15 @@ void processMenu(int value) {
 		point_color = point_blue;
 		strcpy(message, "Point light color changed.");
 		break;
-	case DEFAULT:
-		cout << "Point light color is set to: DEFAULT." << endl;
+	case YELLOW:
+		cout << "Point light color is set to: YELLOW." << endl;
 		point_color = point_yellow;
 		strcpy(message, "Point light color changed.");
+		break;
+	case DEFAULT:
+		cout << "Point light color is set to: DEFAULT." << endl;
+		point_color = point_white;
+		strcpy(message, "Point light color changed to default.");
 		break;
 	case DISABLE:
 		cout << "Menu is disabled. Press M to enable menu." << endl;
@@ -517,7 +522,7 @@ void showSysStatus() {
 	glLoadIdentity();						// 装入单位矩阵
 	glPushAttrib(GL_LIGHTING_BIT);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, white);
-	glRasterPos2f(-470, 440);
+	glRasterPos2f(-460, 420);
 	for (c = fpstext; *c != '\0'; c++) {
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
 	}
@@ -546,9 +551,10 @@ void showSysStatus() {
 }
 
 void drawLight(GLfloat* center, GLfloat radius) {
+	glPushAttrib(GL_LIGHTING_BIT);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, white);
 	glPushMatrix();
 		glTranslatef(center[X], center[Y], center[Z]);
-		glRotatef(-90, 1, 0, 0);
 		glScalef(0.2, 0.2, 0.2);
 		glColor3f(1.0, 1.0, 1.0);
 		glBegin(GL_LINE_LOOP);
@@ -567,6 +573,7 @@ void drawLight(GLfloat* center, GLfloat radius) {
 			}
 		glEnd();
 	glPopMatrix();
+	glPopAttrib();
 }
 
 void initPoint() {
@@ -664,6 +671,7 @@ void initMenu(void) {
 	glutAddMenuEntry("    Red", RED);
 	glutAddMenuEntry("    Green", GREEN);
 	glutAddMenuEntry("    Blue", BLUE);
+	glutAddMenuEntry("    Yellow", YELLOW);
 	glutAddMenuEntry("    Default", DEFAULT);
 	glutAddMenuEntry("------------------------------------------", NOTHING);
 	glutAddMenuEntry("Disable menu", DISABLE);

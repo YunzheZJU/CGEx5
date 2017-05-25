@@ -31,14 +31,14 @@ typedef struct {
 	int wHeight = 0;							// Height of new window
 	int wWidth = 0;								// Width of new window
 
-												// Initiate message string to be shown
+	// Initiate message string to be shown
 	char message[70] = "Welcome!";				// Message string to be shown
 
-												// Initiate parameters for global and local rotating
+	// Initiate parameters for global and local rotating
 	GLfloat fRotate = 0.0f;						// Global roatating
 	GLfloat fTpRtt = 0.0f;						// Local rotating
 
-												// Initiate switch of the scene
+	// Initiate switch of the scene
 	GLboolean bpoint = GL_TRUE;					// Switch for point light
 	GLboolean bspot = GL_TRUE;					// Switch for spot light
 	GLboolean bPersp = GL_TRUE;					// Switch for perspective mode
@@ -46,7 +46,7 @@ typedef struct {
 	GLboolean bAnim = GL_FALSE;					// Switch for global rotating
 	GLboolean bRtt = GL_FALSE;					// Switch for local rotating
 
-												// Initiate location of elements
+	// Initiate location of elements
 	GLfloat teapot[3] = { 0, 0, 0 };			// Position of teapot
 	GLfloat camera[3] = { 0, 1, 4 };			// Position of camera
 	GLfloat camera_polar[2] = { 4, 0 };			// Polar coordinates of camera
@@ -55,10 +55,10 @@ typedef struct {
 	GLfloat spot[4] = { 0, 3, 0, 1 };			// Position of spot light
 	GLfloat spot_target[3] = { 0, 0, 0 };		// Position of target of spot light
 
-												// Initiate list num for display list
+	// Initiate list num for display list
 	GLint List = 0;								// List num of display list
 
-												// Define colors for materials
+	// Define colors for materials
 	GLfloat red[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	GLfloat green[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
 	GLfloat blue[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
@@ -71,7 +71,7 @@ typedef struct {
 	// Initiate cut off degree for spot light
 	GLfloat spot_cutoff = 8.6f;					// Cut off degree of spot light
 
-												// Define colors for lights
+	// Define colors for lights
 	GLfloat point_white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat point_red[4] = { 1.0f, 0.2f, 0.2f, 1.0f };
 	GLfloat point_green[4] = { 0.2f, 1.0f, 0.2f, 1.0f };

@@ -41,37 +41,37 @@ void showSysStatus() {
 	glDisable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);			// 选择投影矩阵
 	glPushMatrix();							// 保存原矩阵
-	glLoadIdentity();						// 装入单位矩阵
-	glOrtho(-480, 480, -480, 480, -1, 1);	// 设置裁减区域
-	glMatrixMode(GL_MODELVIEW);				// 选择Modelview矩阵
-	glPushMatrix();							// 保存原矩阵
-	glLoadIdentity();						// 装入单位矩阵
-	glPushAttrib(GL_LIGHTING_BIT);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, scene.white);
-	glRasterPos2f(-460, 420);
-	for (c = fpstext; *c != '\0'; c++) {
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
-	}
-	glRasterPos2f(110, 440);
-	for (c = cameraposition; *c != '\0'; c++) {
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
-	}
-	glRasterPos2f(110, 390);
-	for (c = pointposition; *c != '\0'; c++) {
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
-	}
-	glRasterPos2f(110, 340);
-	for (c = spottarget; *c != '\0'; c++) {
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
-	}
-	glRasterPos2f(-460, -460);
-	for (c = scene.message; *c != '\0'; c++) {
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
-	}
-	glPopAttrib();
-	glMatrixMode(GL_PROJECTION);			// 选择投影矩阵
-	glPopMatrix();							// 重置为原保存矩阵
-	glMatrixMode(GL_MODELVIEW);				// 选择Modelview矩阵
+		glLoadIdentity();						// 装入单位矩阵
+		glOrtho(-480, 480, -480, 480, -1, 1);	// 设置裁减区域
+		glMatrixMode(GL_MODELVIEW);				// 选择Modelview矩阵
+		glPushMatrix();							// 保存原矩阵
+			glLoadIdentity();						// 装入单位矩阵
+			glPushAttrib(GL_LIGHTING_BIT);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, scene.white);
+				glRasterPos2f(-460, 420);
+				for (c = fpstext; *c != '\0'; c++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
+				}
+				glRasterPos2f(110, 440);
+				for (c = cameraposition; *c != '\0'; c++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+				}
+				glRasterPos2f(110, 390);
+				for (c = pointposition; *c != '\0'; c++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+				}
+				glRasterPos2f(110, 340);
+				for (c = spottarget; *c != '\0'; c++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+				}
+				glRasterPos2f(-460, -460);
+				for (c = scene.message; *c != '\0'; c++) {
+					glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
+				}
+			glPopAttrib();
+			glMatrixMode(GL_PROJECTION);			// 选择投影矩阵
+		glPopMatrix();							// 重置为原保存矩阵
+		glMatrixMode(GL_MODELVIEW);				// 选择Modelview矩阵
 	glPopMatrix();							// 重置为原保存矩阵
 	glEnable(GL_DEPTH_TEST);
 }

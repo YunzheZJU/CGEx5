@@ -93,7 +93,7 @@ void redraw() {
 		glDisable(GL_LIGHT1);
 	}
 
-	glRotatef(scene.fRotate, 0, 1, 0);			// Rotate around Y axis
+	glRotatef(scene.fRotate, 0, 1, 0);		// Rotate around Y axis
 	glRotatef(-90, 1, 0, 0);
 	glScalef(0.2, 0.2, 0.2);
 	callList();								// Draw Scene with display List
@@ -108,8 +108,8 @@ void redraw() {
 }
 
 void reshape(int width, int height) {
-	if (height == 0) {									// Prevent A Divide By Zero By
-		height = 1;										// Making Height Equal One
+	if (height == 0) {						// Prevent A Divide By Zero By
+		height = 1;							// Making Height Equal One
 	}
 
 	scene.wHeight = height;
@@ -119,27 +119,27 @@ void reshape(int width, int height) {
 }
 
 void updateView(int width, int height) {
-	glViewport(0, 0, width, height);					// Reset The Current Viewport
+	glViewport(0, 0, width, height);		// Reset The Current Viewport
 
-	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
-	glLoadIdentity();									// Reset The Projection Matrix
+	glMatrixMode(GL_PROJECTION);			// Select The Projection Matrix
+	glLoadIdentity();						// Reset The Projection Matrix
 
 	float whRatio = (GLfloat)width / (GLfloat)height;
 
 	if (scene.bPersp) {
 		gluPerspective(45.0f, whRatio, 0.1f, 100.0f);
-		//glFrustum(-3, 3, -3, 3, 3,100);				// 此为透视投影的基本方法
+		//glFrustum(-3, 3, -3, 3, 3,100);	// 此为透视投影的基本方法
 	}
 	else {
 		glOrtho(-3, 3, -3, 3, -100, 100);
 	}
 
-	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
+	glMatrixMode(GL_MODELVIEW);				// Select The Modelview Matrix
 }
 
 void processNormalKey(unsigned char k, int x, int y) {
 	switch (k) {
-		// 退出程序
+	// 退出程序
 	case 27:
 	case 'Q':
 	case 'q': {
@@ -147,7 +147,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		exit(0);
 		break;
 	}
-			  // 显示菜单
+	// 显示菜单
 	case 'M':
 	case 'm': {
 		cout << "M pressed.\n\tRight click to check for menu items." << endl;
@@ -155,7 +155,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		glutAttachMenu(GLUT_RIGHT_BUTTON);
 		break;
 	}
-			  // 线框模式
+	// 线框模式
 	case 'O':
 	case 'o': {
 		scene.bWire = !scene.bWire;
@@ -169,7 +169,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		}
 		break;
 	}
-			  // 转动茶壶
+	// 转动茶壶
 	case 'E':
 	case 'e': {
 		scene.bRtt = !scene.bRtt;
@@ -183,7 +183,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		}
 		break;
 	}
-			  // 整体转动
+	// 整体转动
 	case ' ': {
 		scene.bAnim = !scene.bAnim;
 		if (scene.bAnim) {
@@ -196,7 +196,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		}
 		break;
 	}
-			  // 关闭点光源
+	// 关闭点光源
 	case '0': {
 		scene.bpoint = !scene.bpoint;
 		if (scene.bpoint) {
@@ -209,7 +209,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		}
 		break;
 	}
-			  // 关闭聚光灯
+	// 关闭聚光灯
 	case '1': {
 		scene.bspot = !scene.bspot;
 		if (scene.bspot) {
@@ -223,7 +223,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		break;
 	}
 
-			  // 摄像机移动
+	// 摄像机移动
 	case 'P':
 	case 'p': {
 		scene.bPersp = !scene.bPersp;
@@ -285,7 +285,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		break;
 	}
 
-			  //茶壶平移
+	//茶壶平移
 	case 'L':
 	case 'l': {
 		if (scene.teapot[X] <= 2) {
@@ -347,7 +347,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		break;
 	}
 
-			  // 聚光灯目标平移
+	// 聚光灯目标平移
 	case 'T':
 	case 't': {
 		scene.spot_target[Z] -= 0.1;
@@ -381,7 +381,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 		break;
 	}
 
-			  // 聚光灯圆锥角度
+	// 聚光灯圆锥角度
 	case 'R':
 	case 'r': {
 		if (scene.spot_cutoff >= 1) {
@@ -413,7 +413,7 @@ void processNormalKey(unsigned char k, int x, int y) {
 
 void processSpecialKey(int k, int x, int y) {
 	switch (k) {
-		// 点光源位置相关操作
+	// 点光源位置相关操作
 	case 100: {
 		scene.point[X] -= 0.1;
 		cout << fixed << setprecision(1) << "Left Arrow pressed.\n\tPosition of point light is set to (" <<

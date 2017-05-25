@@ -1,73 +1,9 @@
-// glutEx1.cpp : 定义控制台应用程序的入口点。
+// main.cpp : 定义控制台应用程序的入口点。
 //
 
-#include <stdlib.h>
-#include <gl/glut.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
-#include <iostream>
-#include <iomanip>
+#include "head.h"
 
 #pragma warning(disable:4996)
-
-using namespace std;
-
-#define X 0
-#define Y 1
-#define Z 2
-#define R 0
-#define A 1
-#define Pi 3.1415926
-
-float fTranslate;
-float fRotate = 0.0;
-float fScale = 1.0;									// set inital scale value to 1.0
-float fTpRtt = 0.0;
-
-bool bpoint = true;									// 点光源开关
-bool bspot = true;									// 聚光灯开关
-bool bPersp = true;									// 透视模式开关
-bool bWire = false;									// 线框模式开关
-bool bAnim = false;									// 整体旋转开关
-bool bRtt = false;									// 茶壶旋转开关
-
-int wHeight = 0;
-int wWidth = 0;
-
-float teapot[] = { 0, 0, 0 };						// 茶壶位置
-float camera[] = { 0, 1, 4 };						// 摄像机位置
-float camera_polar[] = { 4, 0 };					// 摄像机极坐标
-float camera_target[] = { 0, 1, 0 };				// 摄像机目标
-float point[] = { 1, 1, 1, 1 };						// 点光源位置
-float spot[] = { 0, 3, 0, 1 };						// 聚光灯位置
-float spot_target[] = { 0, 0, 0 };					// 聚光灯目标
-
-char message[70] = "Welcome!";
-
-GLint List = 0;
-
-GLfloat spot_cutoff = 8.6;
-GLfloat red[] = { 1.0, 0.0, 0.0, 1.0 };
-GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
-GLfloat blue[] = { 0.0, 0.0, 1.0, 1.0 };
-GLfloat yellow[] = { 1.0, 1.0, 0.0, 1.0 };
-GLfloat turquoise[] = { 0.0, 1.0, 1.0, 1.0 };
-GLfloat golden[] = { 1.0, 0.843, 0.0, 1.0 };
-GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
-GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
-GLfloat point_diffuse[] = { 1.0, 1.0, 0.0, 1.0 };	// 漫反射光默认为黄色
-GLfloat* color = white;
-
-enum {
-	NOTHING,
-	RED,
-	GREEN,
-	BLUE,
-	DEFAULT,
-	DISABLE,
-	EXIT
-};
 
 void drawLeg() {
 	glScalef(1, 1, 3);
@@ -519,22 +455,22 @@ void processMenu(int value) {
 	switch (value) {
 	case RED:
 		cout << "Point light color is set to: RED." << endl;
-		color = red;
+		point_color = point_red;
 		strcpy(message, "Point light color changed.");
 		break;
 	case GREEN:
 		cout << "Point light color is set to: GREEN." << endl;
-		color = green;
+		point_color = point_green;
 		strcpy(message, "Point light color changed.");
 		break;
 	case BLUE:
 		cout << "Point light color is set to: BLUE." << endl;
-		color = blue;
+		point_color = point_blue;
 		strcpy(message, "Point light color changed.");
 		break;
 	case DEFAULT:
 		cout << "Point light color is set to: DEFAULT." << endl;
-		color = yellow;
+		point_color = point_yellow;
 		strcpy(message, "Point light color changed.");
 		break;
 	case DISABLE:
@@ -636,15 +572,15 @@ void drawLight(GLfloat* center, GLfloat radius) {
 void initPoint() {
 	glLightfv(GL_LIGHT0, GL_POSITION, point);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, white);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, blue);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, point_color);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, white);
 	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.5f);
 	glEnable(GL_LIGHT0);
 }
 
 void updatePoint() {
 	glLightfv(GL_LIGHT0, GL_POSITION, point);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, point_color);
 	glEnable(GL_LIGHT0);
 }
 

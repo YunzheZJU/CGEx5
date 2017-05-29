@@ -8,8 +8,9 @@
 #include <iostream>
 #include <iomanip>
 
-// Include glut.h
+// Include glut.h and glext.h
 #include <gl/glut.h>
+#include <gl/glext.h>
 
 // Using namespace std for cin and cout
 using namespace std;
@@ -42,6 +43,7 @@ typedef struct {
 	GLboolean bpoint = GL_TRUE;					// Switch for point light
 	GLboolean bspot = GL_TRUE;					// Switch for spot light
 	GLboolean bPersp = GL_TRUE;					// Switch for perspective mode
+	GLboolean balias = GL_TRUE;					// Switch for perspective mode
 	GLboolean bWire = GL_FALSE;					// Switch for line mode
 	GLboolean bAnim = GL_FALSE;					// Switch for global rotating
 	GLboolean bRtt = GL_FALSE;					// Switch for local rotating

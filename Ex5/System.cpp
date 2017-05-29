@@ -77,6 +77,15 @@ void redraw() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	// Enable alias
+	//if (scene.balias) {
+
+		//glEnable(GL_MULTISAMPLE);
+	//}
+	//else {
+	//	glDisable(GL_MULTISAMPLE);
+	//}
+
 	if (scene.bpoint) {
 		updatePoint();						// 更新点光源信息并启用
 		drawLight(scene.point, 0.5);

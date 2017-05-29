@@ -10,7 +10,6 @@
 
 // Include glut.h and glext.h
 #include <gl/glut.h>
-#include <gl/glext.h>
 
 // Using namespace std for cin and cout
 using namespace std;

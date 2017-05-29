@@ -9,18 +9,9 @@ Myscene scene;
 
 int main(int argc, char *argv[]) {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE | GLUT_MULTISAMPLE);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowSize(480, 480);
 	int windowHandle = glutCreateWindow("Ex 5");
-
-	GLint buf, sbuf;
-
-	glGetIntegerv(GL_SAMPLE_BUFFERS, &buf);
-	printf("number of sample buffers is %d\n", buf);
-	glGetIntegerv(GL_SAMPLES, &sbuf);
-	printf("number of samples is %d\n", sbuf);
-
-	glDisable(GL_MULTISAMPLE);
 
 	// Initiate the Menu
 	initMenu();

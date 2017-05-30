@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
 
 	glutDisplayFunc(redraw);
 	glutReshapeFunc(reshape);
+	glutMouseFunc(processMouse);
 	glutKeyboardFunc(processNormalKey);
 	glutSpecialFunc(processSpecialKey);
 	glutIdleFunc(idle);

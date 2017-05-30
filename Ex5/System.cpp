@@ -77,14 +77,14 @@ void redraw() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	// Enable alias
-	//if (scene.balias) {
-
-		//glEnable(GL_MULTISAMPLE);
-	//}
-	//else {
-	//	glDisable(GL_MULTISAMPLE);
-	//}
+	if (scene.bmsaa)
+	{
+		glEnable(GL_MULTISAMPLE_ARB);
+	}
+	else
+	{
+		glDisable(GL_MULTISAMPLE_ARB);
+	}
 
 	if (scene.bpoint) {
 		updatePoint();						// 更新点光源信息并启用
@@ -144,6 +144,14 @@ void updateView(int width, int height) {
 	}
 
 	glMatrixMode(GL_MODELVIEW);				// Select The Modelview Matrix
+}
+
+void processMouse(int button, int state, int x, int y) {
+	if (state == GLUT_DOWN) {
+		scene.bmsaa = !scene.bmsaa;
+		printf("switch msaa\n");
+		glutPostRedisplay();
+	}
 }
 
 void processNormalKey(unsigned char k, int x, int y) {

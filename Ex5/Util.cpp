@@ -38,7 +38,8 @@ void showSysStatus() {
 		scene.spot_target[X], scene.spot_target[Y], scene.spot_target[Z]);
 
 	char *c;
-	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);				// 不受灯光影响
+	glDisable(GL_LIGHTING);
 	glMatrixMode(GL_PROJECTION);			// 选择投影矩阵
 	glPushMatrix();							// 保存原矩阵
 		glLoadIdentity();						// 装入单位矩阵
@@ -74,4 +75,5 @@ void showSysStatus() {
 		glMatrixMode(GL_MODELVIEW);				// 选择Modelview矩阵
 	glPopMatrix();							// 重置为原保存矩阵
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
 }

@@ -20,11 +20,11 @@ int main(int argc, char *argv[]) {
 	//glGetIntegerv(GL_SAMPLES, &sbuf);
 	//printf("number of samples is %d\n", sbuf);
 
-	// Initiate the Menu
+	// Initiate menu
 	initMenu();
-	// Initiate the display list
+	// Initiate display list
 	scene.List = genTableList();
-	// Initiate the Lights
+	// Initiate lighting
 	initLight();
 	initPoint();
 	initSpot();

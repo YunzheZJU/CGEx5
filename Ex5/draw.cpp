@@ -8,15 +8,15 @@ void drawLeg() {
 }
 
 void drawScene() {
-	// 这时横x深y纵z
-	glPushAttrib(GL_LIGHTING_BIT);
+	// 横x深y纵z
+	glPushAttrib(GL_LIGHTING_BIT);							// 备份材质属性
 		// teapot
 		glPushMatrix();
 			glTranslatef(scene.teapot[X], scene.teapot[Y], scene.teapot[Z]);
 			glPushMatrix();
 				glTranslatef(0, 0, 4.75);
 				glRotatef(90, 1, 0, 0);
-				// 从此横x纵y深z
+				// 横x纵y深z
 				glRotatef(scene.fTpRtt, 0, 1, 0);
 				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, scene.black);
 				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, scene.golden);
@@ -88,17 +88,17 @@ void drawLight(GLfloat* center, GLfloat radius) {
 			glColor3f(1.0, 1.0, 1.0);
 			glBegin(GL_LINE_LOOP);
 				for (int i = 0; i < 20; i++) {
-					glVertex3f(2 * radius * cos(2 * Pi / 20 * i), radius * sin(2 * Pi / 20 * i), 0);
+					glVertex3f(2 * radius * cos(2 * PI / 20 * i), radius * sin(2 * PI / 20 * i), 0);
 				}
 			glEnd();
 			glBegin(GL_LINE_LOOP);
 				for (int i = 0; i < 20; i++) {
-					glVertex3f(2 * radius * cos(2 * Pi / 20 * i), 0, radius * sin(2 * Pi / 20 * i));
+					glVertex3f(2 * radius * cos(2 * PI / 20 * i), 0, radius * sin(2 * PI / 20 * i));
 				}
 			glEnd();
 			glBegin(GL_LINE_LOOP);
 				for (int i = 0; i < 20; i++) {
-					glVertex3f(0, radius * sin(2 * Pi / 20 * i), radius * cos(2 * Pi / 20 * i));
+					glVertex3f(0, radius * sin(2 * PI / 20 * i), radius * cos(2 * PI / 20 * i));
 				}
 			glEnd();
 		glPopMatrix();

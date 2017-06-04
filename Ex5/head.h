@@ -26,7 +26,7 @@ using namespace std;
 #define A 1
 
 // Define Pi in math
-#define Pi 3.1415926
+#define PI 3.1415926
 
 typedef struct {
 	// Declare height and width variables for size of new window
@@ -41,10 +41,10 @@ typedef struct {
 	GLfloat fTpRtt = 0.0f;						// Local rotating
 
 	// Initiate switch of the scene
-	GLboolean bpoint = GL_TRUE;					// Switch for point light
-	GLboolean bspot = GL_TRUE;					// Switch for spot light
+	GLboolean bPoint = GL_TRUE;					// Switch for point light
+	GLboolean bSpot = GL_TRUE;					// Switch for spot light
 	GLboolean bPersp = GL_TRUE;					// Switch for perspective mode
-	GLboolean bmsaa = GL_FALSE;					// Switch for perspective mode
+	GLboolean bMsaa = GL_FALSE;					// Switch for perspective mode
 	GLboolean bWire = GL_FALSE;					// Switch for line mode
 	GLboolean bAnim = GL_FALSE;					// Switch for global rotating
 	GLboolean bRtt = GL_FALSE;					// Switch for local rotating

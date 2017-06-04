@@ -38,8 +38,8 @@ void showSysStatus() {
 		scene.spot_target[X], scene.spot_target[Y], scene.spot_target[Z]);
 
 	char *c;
-	glDisable(GL_DEPTH_TEST);				// 不受灯光影响
-	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);					// 不受灯光影响
 	glMatrixMode(GL_PROJECTION);			// 选择投影矩阵
 	glPushMatrix();							// 保存原矩阵
 		glLoadIdentity();						// 装入单位矩阵
